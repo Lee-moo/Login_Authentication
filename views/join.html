@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JOIN</title>
+    <link rel="stylesheet" href="../CSS/default.css" />
+    <link rel="stylesheet" href="../CSS/join.css" />
+  </head>
+  <body>
+    <h2 class="title">JOIN</h2>
+    <div class="join_wrapper">
+      <form action="">
+        <div class="join_row">
+          <h2><label for="id">아이디</label></h2>
+          <span><input type="text" id="id" /></span>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="pwd">비밀번호</label></h2>
+          <span><input type="password" id="pwd" /></span>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="chk_pwd">비밀번호 확인</label></h2>
+          <span><input type="password" id="chk_pwd" /></span>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="name">이름</label></h2>
+          <span><input type="text" id="name" /></span>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="yy">생년월일</label></h2>
+          <div class="wrapper_birthday">
+            <span><input type="text" id="mm" /></span>
+            <span>
+              <select id="mm" class="sel">
+                <option value="">월</option>
+                <option value="01">1</option>
+                <option value="02">2</option>
+                <option value="03">3</option>
+                <option value="04">4</option>
+                <option value="05">5</option>
+                <option value="06">6</option>
+                <option value="07">7</option>
+                <option value="08">8</option>
+                <option value="09">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+              </select>
+            </span>
+            <span><input type="text" id="dd" /></span>
+          </div>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="gender">성별</label></h2>
+          <span><input type="text" id="gender" /></span>
+          <span></span>
+        </div>
+
+        <input type="submit" class="btn_submit" value="가입하기" />
+      </form>
+    </div>
+  </body>
+</html>
