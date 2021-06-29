@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sign up</title>
+    <link rel="stylesheet" href="default.css" />
+    <link rel="stylesheet" href="join.css" />
+  </head>
+  <body>
+    <h2 class="title">JOIN</h2>
+    <div class="join_wrapper">
+      <form action="">
+        <div class="join_row">
+          <h2><label for="id">아이디</label></h2>
+          <span><input type="text" id="id" /></span>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="pwd">비밀번호</label></h2>
+          <span><input type="password" id="pwd" /></span>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="chk_pwd">비밀번호 확인</label></h2>
+          <span><input type="password" id="chk_pwd" /></span>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="name">이름</label></h2>
+          <span><input type="text" id="name" /></span>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="yy">생년월일</label></h2>
+          <div class="wrapper_birthday">
+            <span><input type="text" id="yy" /></span>
+            <span>
+              <select id="mm" class="sel">
+                <option value="">월</option>
+                <option value="01">1</option>
+                <option value="02">2</option>
+                <option value="03">3</option>
+                <option value="04">4</option>
+                <option value="05">5</option>
+                <option value="06">6</option>
+                <option value="07">7</option>
+                <option value="08">8</option>
+                <option value="09">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+              </select>
+            </span>
+            <span><input type="text" id="dd" /></span>
+          </div>
+        </div>
+
+        <div class="join_row">
+          <h2><label for="gender">성별</label></h2>
+          <span>
+            <select id="gender" class="sel">
+              <option value="1">남</option>
+              <option value="2">여</option>
+            </select>
+          </span>
+        </div>
+
+        <input type="button" class="btn_submit" value="가입하기" onclick="sign();" />
+      </form>
+    </div>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      function sign() {
+        let id = document.getElementById('id').value;
+        let pwd = document.getElementById('pwd').value;
+        let chk_pwd = document.getElementById('chk_pwd').value;
+        let name = document.getElementById('name').value;
+        let yy = document.getElementById('yy').value;
+        let mm = document.getElementById('mm').value;
+        let dd = document.getElementById('dd').value;
+        let gender = document.getElementById('gender').value;
+
+        if (id.length === 0 || name.length === 0 || yy.length === 0 || mm.length === 0 || dd.length === 0 || gender.length === 0) {
+          return alert('항목을 입력해주세요.');
+        }
+
+        if (pwd !== chk_pwd) {
+          return alert('비밀번호가 일치하지 않습니다.');
+        }
+
+        axios({
+          url: 'http://localhost:3000/sign',
+          method: 'post',
+          data: {
+            id,
+            pwd,
+            name,
+            yy,
+            mm,
+            dd,
+            gender,
+          },
+        })
+          .then((response) => {
+            if (response.status === 200) {
+              if (response.data.result == 1) {
+                alert(response.data.data);
+                return (location.href = 'http://localhost:3000/');
+              } else {
+                alert(response.data.data);
+              }
+            }
+          })
+          .catch((error) => {
+            if (error.response) {
+              console.log(error.response.status);
+            }
+          });
+      }
+    </script>
+  </body>
+</html>

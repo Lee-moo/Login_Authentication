@@ -25,6 +25,7 @@
     "express-session": "^1.17.2",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
     "nunjucks": "^3.2.3",
     "passport": "^0.4.1",
     "passport-kakao": "^1.0.1",

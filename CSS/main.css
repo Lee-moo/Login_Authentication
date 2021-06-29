@@ -23,8 +23,8 @@ input {
   width: 250px;
 }
 
-input[type="text"],
-input[type="password"] {
+input[type='text'],
+input[type='password'] {
   font-size: 16px;
   padding: 15px 15px;
   margin: 30px auto;
@@ -32,7 +32,7 @@ input[type="password"] {
   border-bottom: 1px solid #adadad;
 }
 
-input[type="submit"] {
+input[type='submit'] {
   font-size: 16px;
   line-height: 26px;
   margin: 0 auto;
@@ -44,7 +44,7 @@ input[type="submit"] {
   margin-bottom: 25px;
 }
 
-input[type="submit"]:hover {
+input[type='submit']:hover {
   border: 1px solid #000;
 }
 
@@ -55,14 +55,14 @@ input[type="submit"]:hover {
   padding-bottom: 40px;
 }
 
-.user_menu .join {
+.user_menu .sign {
   display: inline-block;
   line-height: 30px;
   font-size: 13px;
   cursor: pointer;
 }
 
-.user_menu .join:hover {
+.user_menu .sign:hover {
   text-decoration: underline;
 }
 
@@ -92,7 +92,7 @@ input[type="submit"]:hover {
   margin-right: 7px;
 }
 .sns .naver:after {
-  content: "";
+  content: '';
   display: inline-block;
   position: absolute;
   width: 1px;
