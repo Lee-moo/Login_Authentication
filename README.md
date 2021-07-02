@@ -133,7 +133,7 @@ router.post('/', isNotLoggedIn, (req, res, next) => {
 });
 ```
 
-#### LocalStreategy.js
+#### localStreategy.js
 ```
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
@@ -232,7 +232,98 @@ module.exports = () => {
   'passport/index.js'의 deserializeUser를 호출합니다. deserializeUser는 serializeUser의 반대 과정으로 session에 있는 user.id로 DB 검색을 통해 user를 req.user에 넣어줍니다. 따라서 이후의 req.user를 통해 사용자의 정보의 접근할 수 있습니다. 
 </p>
 
+## 💪OAuth2.0을 이용한 SNS 로그인 인증 
+<p>
+OAuth는 외부 서비스의 인증 및 권한 부여를 관리하는 볌용적인 프로토콜로 많이 활용되는 기능 중 하나가 SNS 로그인입니다.
+우선 SNS 로그인 인증의 각 단계를 알아보겠습니다.<br><br>
+
+1. 사용자가 서버에게 로그인을 요청합니다.<br>
+2. 서버는 사용자에게 카카로 로그인 URL을 사용자에게 보냅니다.<br>
+3. 사용자는 해당 URL에서 로그인을 진행하고, 자격 정보(Credentials)를 발급받아 사용자로부터 사용자 정보 및 기능 활용 동의를 
+  받습니다.<br>
+4. 사용자가 필수 항목에 동의하고 로그인을 요청하면 인가 코드(Ahthorization Code)가 발급됩니다. 이 코드는 앱 정보의 Redirect URI에
+  전달됩니다.<br>
+5. 서버는 전달 받은 인가 코드를 기반으로 토큰을 요청하고 받습니다. <br><br>
+  
+</p>
+
+### passport-kakao을 이용한 로그인 인증 
+<p>
+  위의 OAuth2.0을 이용한 SNS 로그인 인증을 Node.js에서 구현할 경우 passport 패키지를 사용해 간단하게 구현할 수 있습니다.
+  passport-kakao를 이용해 SNS 로그인 인증을 하는 과정을 코드를 통해 알아보겠습니다. 
+</p>
 
 
+#### main.html
+```
+<a href="/kakao" class="kakao"><img src="kakao.png" width="30" height="30" alt="카카오" /></a>
+```
 
+#### page.js
+```
 
+router.get('/kakao', isNotLoggedIn, passport.authenticate('kakao'));
+
+router.get(
+  '/oauth/kakao',
+  passport.authenticate('kakao', {
+    failureRedirect: '/',
+  }),
+  (req, res) => {
+    res.redirect('http://localhost:3000/mypage');
+  }
+);
+```
+
+#### kakaoStrategy.js
+```
+const passport = require('passport');
+const KakaoStrategy = require('passport-kakao').Strategy;
+const tUser = require('../models/tUser');
+
+module.exports = () => {
+  passport.use(
+    new KakaoStrategy(
+      {
+        clientID: process.env.KAKAO_ID,
+        callbackURL: `${process.env.KAKAO_CALLBACK}`,
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          const user = await tUser.findOne({
+            where: { user_id: profile.id, provider: '2' },
+          });
+          if (user) {
+            done(null, user);
+          } else {
+            const birthday = profile._json.kakao_account.birthday;
+
+            const newUser = await tUser.create({
+              user_id: profile.id,
+              name: profile._json.properties.nickname,
+              provider: '2',
+              birthday: birthday.slice(0, 2) + '-' + birthday.slice(2, 4),
+              gender: profile._json.kakao_account.gender === 'male' ? '1' : '2',
+            });
+
+            done(null, newUser);
+          }
+        } catch (error) {
+          console.error(error);
+          done(error);
+        }
+      }
+    )
+  );
+};
+```
+
+- 위에서 passport의 기본적인 설정은 같기 때문에 관련된 코드를 제외했습니다.(passport.indexjs, app.js)
+
+<p>
+ 1️⃣. 사용자가 카카오 로그인을 요청합니다. (main.html)
+ 2️⃣. 서버는 카카오 로그인 요청을 처리하기 위한 라우터(kakaoStrategy.js)에서 app.use(passport.authentication('kakao'));를 실행하면 kakakoStrategy.js를 실행합니다.
+  
+      
+  
+</p>
