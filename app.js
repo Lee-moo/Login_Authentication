@@ -24,16 +24,7 @@ nunjucks.configure('views', {
   watch: true,
 });
 
-sequelize
-  .sync({
-    force: false,
-  })
-  .then(() => {
-    console.log('db connect');
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+require('./models/initialize')();
 
 app.use(morgan('dev'));
 app.use(express.json());

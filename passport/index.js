@@ -5,18 +5,18 @@ const tUser = require('../models/tUser');
 
 module.exports = () => {
   passport.serializeUser((user, done) => {
-    console.log(user.id);
     done(null, user.id);
   });
 
   passport.deserializeUser((id, done) => {
     tUser
       .findOne({
-        where: { id: id },
+        where: { id },
       })
       .then((user) => done(null, user))
       .catch((err) => done(err));
   });
 
+  kakao();
   local();
 };

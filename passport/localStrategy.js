@@ -11,7 +11,6 @@ module.exports = () => {
         passwordField: 'password',
       },
       async (user_id, password, done) => {
-        console.log('localStrategy in');
         try {
           const user = await tUser.findOne({ where: { user_id } });
 

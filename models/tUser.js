@@ -10,10 +10,6 @@ module.exports = class tUser extends Sequelize.Model {
           type: Sequelize.STRING(50),
           allowNull: true,
         },
-        sns_id: {
-          type: Sequelize.STRING(30),
-          allowNull: true,
-        },
         password: {
           type: Sequelize.STRING(100),
           allowNull: true,

@@ -1,0 +1,36 @@
+html,
+body {
+  font-size: 16px;
+  background: #34495e;
+}
+
+.login_wrapper {
+  position: relative;
+  margin: 250px auto 0 auto;
+  background: #fff;
+  width: 300px;
+  border-radius: 5px;
+}
+
+h2 {
+  display: block;
+  line-height: 1;
+  padding: 25px;
+  text-align: center;
+  color: #758594;
+}
+
+ul {
+  padding: 0 15px 15px 15px;
+  color: #000;
+}
+li {
+  padding: 0 0 10px 0;
+}
+
+a {
+  position: absolute;
+  cursor: pointer;
+  bottom: 3px;
+  right: 10px;
+}
