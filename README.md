@@ -64,9 +64,9 @@
   4. 서버는 사용자 요청 시 보내온 session ID 값을 통해 사용자의 로그인을 유지시키며, 사용자에 맞는 데이터는 보내줍니다.<br>
 </p>
 
-### passport-local을 이용한 로그인 인증 
+### [passport](http://www.passportjs.org)-local을 이용한 로그인 인증 
 <p>
-  위의 세션을 이용한 로그인 인증을 Node.js에서 구현할 경우 [passport](http://www.passportjs.org/) 패키지를 사용해 간단하게 구현할 수 있습니다.
+  위의 세션을 이용한 로그인 인증을 Node.js에서 구현할 경우 passport 패키지를 사용해 간단하게 구현할 수 있습니다.
   passport는 각 인증 방식에 따라 전략(Strategy)이라고 부르며 각 전략을 통해 원하는 로그인 인증 방식을 채택해 사용할 수 있어 유연한 방식이라 생각합니다.
   
   passport-local은 username과 password를 이용해 인증을 하는 전략으로 각 단계를 코드를 통해 자세하게 알아보겠습니다.
