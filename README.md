@@ -10,7 +10,7 @@
 <P>
   그동안 Node.js를 이용한 백엔드 공부를 하면서 로그인 인증을 여러차례 구현해봤지만, 항상 passport를 비롯한 로그인 인증에 대한 이해가 부족하다는 것을 느껴서 
   로그인 인증만 구현하는 미니 프로젝트를 진행하게 되었습니다.
-  따라서 로그인 인증에 필요한 각 단계와 이를 쉽게 구현할 수 있게 도와주는 package 중 하나인 [passport](http://www.passportjs.org)를 하나씩 알아보도록 하겠습니다.
+  따라서 로그인 인증에 필요한 각 단계와 이를 쉽게 구현할 수 있게 도와주는 package 중 하나인 passport를 하나씩 알아보도록 하겠습니다.
 </p>
 
 <h2>🔧 디렉토리 구조</h2>
@@ -49,7 +49,7 @@
 
 <h2> 🏁실행 </h2>
 
-### 1️⃣passport-local
+### 1️⃣[passport](http://www.passportjs.org)-local
 ![local login](https://github.com/Lee-moo/Login_Authentication_Node.js/blob/main/readmeImage/passport-local.gif)
 
 ### 2️⃣passport-kakao 
