@@ -321,9 +321,12 @@ module.exports = () => {
 - 위에서 passport의 기본적인 설정은 같기 때문에 관련된 코드를 제외했습니다.(passport.indexjs, app.js)
 
 <p>
- 1️⃣. 사용자가 카카오 로그인을 요청합니다. (main.html)
- 2️⃣. 서버는 카카오 로그인 요청을 처리하기 위한 라우터(kakaoStrategy.js)에서 app.use(passport.authentication('kakao'));를 실행하면 kakakoStrategy.js를 실행합니다.
-  
-      
-  
+ 1️⃣. 'main.html'에서 사용자가 '/kakao'로 로그인 요청을 합니다. <br><br>
+ 2️⃣. 서버는 사용자의 로그인 요청에 대해서 '/kakao' 라우터의 passport.authenticate('kakao')를 실행합니다.<br><br>
+ 3️⃣. passport.authenticate('kakao')는 passpost.kakao가 구현된 passport.use('new KkakaoStrategy())를 찾아 인증을 요청합니다.<br><br>
+ 4️⃣. 사용자는 카카오 로그인 페이지로 이동하고 인증 과정을 마치면 'page.js'의 '/oauth/kakao' (callback URI)로 정보를 반환합니다.<br><br>
+ 5️⃣. redirect URI로 정보를 반환받으면 passport.use(new KaKaoStrategy())의 callback이 실행되며, 여기서 Access Token, Refresh Token과 
+  유저 정보가 담긴 profile을 토대로 사용자 로그인 처리를 하면 됩니다. <br><br>
+ 6️⃣. passport-local과 다르게 req.login()은 내부적으로 호출하게 됩니다. <br><br>
+
 </p>
