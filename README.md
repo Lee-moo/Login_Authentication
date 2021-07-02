@@ -72,15 +72,14 @@
   passport-local은 username과 password를 이용해 인증을 하는 전략으로 각 단계를 코드를 통해 자세하게 알아보겠습니다.
 </p>
 
-<p>
-passport를 이용한 로그인 인증을 하기 전에 기본적으로 해야 할 configuration이 있습니다.
-보통 Node.js로 프로젝트를 구성할 때 app.js에 다양한 설정을 하기 때문에 저도 app.js에 passport에 기본 설정을 했습니다.
-<pre><code>
+#### app.js
+```
 const session = require('express-session');
 const passportConfig = require('./passport');
 const passport = require('passport');
 
 passportConfig();
+
 
 app.use(
   session({
@@ -96,31 +95,21 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-</code></pre>
+```
 
-passportConfig()는 ./passport 폴더의 index.js 파일을 가리키는데 해당 파일에는 마지막에 알아보겠습니다.
-
-passport.initialize()는 passport를 사용하기 위한 작업을 수행합니다.<br>
-passport.session()은 passport는 기본적으로 session을 사용해 동작하기 때문에 꼭 express-session 뒤에 작성해줘야 합니다. 자세한 동작 과정을 코드를 통해서 알아보겠습니다. 
-</p>
-
-
-<p>
-1. 사용자의 로그인 요청 
+#### main.html
 ```
 <form action="/" method="post" enctype="application/json">
-    <div class="input">
-       <input type="text" id="user_id" name="user_id" placeholder="ID" />
-       <input type="password" id="password" name="password" placeholder="PW" />
-       <input type="submit" value="LOG IN" />
-    </div>
+  <div class="input">
+    <input type="text" id="user_id" name="user_id" placeholder="ID" />
+    <input type="password" id="password" name="password" placeholder="PW" />
+    <input type="submit" value="LOG IN" />
+  </div>
 </form>
 ```
-사용자가 post 방식으로 ID, PW를 입력 후 서버에 로그인을 요청합니다. 
-</p>
 
+#### page.js(login router)
 ```
-2. 서버의 로그인 처리를 위한 라우터 
 router.post('/', isNotLoggedIn, (req, res, next) => {
   passport.authenticate('local', (error, user, info) => {
     if (error) {
@@ -142,19 +131,14 @@ router.post('/', isNotLoggedIn, (req, res, next) => {
     });
   })(req, res, next);
 });
+```
 
-서버는 사용자의 로그인 요청을 처리하기 위해서 passport를 사용하는데
-여기서 isNotLoggedIn은 사용자가 로그인이 상태가 아닌 경우에만 로그인 요청을 할 수 있도록 처리하기 위한 미들웨어입니다.
-passport를 통해 사용자 로그인 인증이 정상적으로 수행되면 passport는 req.isAuthenticated()를 통해 해당 사용자의 로그인 여부를 Boolean 값으로
-리턴해주는데 이를 편하게 사용하기 위해서 미들웨어로 구성한 것입니다. 
-
-passport.authentication('local')은 passport-local을 사용한다고 것이고, 
-이 명령을 만나면 passsport-local이 구현되어 있는 곳으로 이동합니다. 
-
---------------------------------------------------------------------
-
-
+#### LocalStreategy.js
+```
+const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
+const tUser = require('../models/tUser');
 
 module.exports = () => {
   passport.use(
@@ -185,13 +169,59 @@ module.exports = () => {
     )
   );
 };
-
 ```
 
+#### passport/index.js
+```
+const passport = require('passport');
+const local = require('./localStrategy');
+const kakao = require('./kakaoStrategy');
+const tUser = require('../models/tUser');
 
+module.exports = () => {
+  passport.serializeUser((user, done) => {
+    done(null, user.id);
+  });
 
+  passport.deserializeUser((id, done) => {
+    tUser
+      .findOne({
+        where: { id },
+      })
+      .then((user) => done(null, user))
+      .catch((err) => done(err));
+  });
 
+  kakao();
+  local();
+};
+```
 
+- 위의 코드들은 각 파일에서 로그인에 관련된 로직들만 따로 뺏습니다.
+- passport를 사용한 로그인 인증을 하기 전에 passport를 하기 위해서 기본적으로 설정해야 할 것들이 있습니다.
+- app.js에서 passportConfig()는 passport/index.js 파일에 있는 app.js에 추가하기 위한건데, app.js를 복잡하지 않게 하기 위해서 따로 뺏습니다.
+- passport/index.js에 있는 내용들은 마지막에 설명하겠습니다.
+- passport.initialize()는 passport를 사용하기 전에 기본 작업을 수행합니다.
+- passport는 기본적으로 session을 사용해 사용자 인증을 처리하기 때문에 꼭 express-session 뒤에 나와야 합니다. 
+
+<p>
+이제부터 passport를 이용한 사용자 인증의 각 단계를 코드를 기반으로 알아보겠습니다.<br>
+1. 사용자가 ID, PW를 통해 로그인을 요청합니다.(main.html) <br>
+  - 사용자는 id, pw를 입력해 post 방식으로 서버에 로그인을 요청합니다. <br>
+2. 서버는 해당 경로의 router를 통해 사용자의 로그인 요청을 받습니다. (page.js) <br>
+  - passport.authentication('local')부분이 바로 passport-local 전략을 통해 로그인 인증을 한다는 것이고,
+  passport-local이 구현되어 있는 passport/localStrategy.js로 이동합니다.  <br>
+3. passport-local의 코드의 usernameFiled와 passwordFiled는 사용자의 id와 pw를 설정하는 부분인데, 각 값은 사용자가 form 태그로 보내온 
+  parameter의 name을 적어주시면 됩니다. main.html에서 id의 name은 'user_id', pw의 name은 'password'라고 해줬기 때문에 동일하게 적어줍니다. 이렇게 동일한 name을 적어주시면 passport가 알아서 req.body에 있는 데이터를 파라미터로 넣어줍니다.<br>
+4. 이렇게 username과 password를 설정하면 두 번째 파라미터인 verify callback이 실행됩니다. 여기서 우리는 입력받은 username, password를 DB에 저장되어 있는 사용자 정보와 비교합니다. <br>
+  코드를 보면 우선 ID를 검색해 사용자가 존재하는 지 검색하고 존재한다면 비밀번호를 비교합니다. 후에 verify callback의 파라미터인 done을 호출하는데 done을 호출하면 2번째 page.js의 router의 콜백 함수가 호출됩니다. <br>
+  
+  다시 page.js로 돌아가기 전에 done에 대해 자세하게 알아보겠습니다.<br>
+  done(null, user) - 
+  done(null, false, {message:'not found'})
+  done(error)
+ 
+</p>
 
 
 
