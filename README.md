@@ -205,22 +205,31 @@ module.exports = () => {
 - passport는 기본적으로 session을 사용해 사용자 인증을 처리하기 때문에 꼭 express-session 뒤에 나와야 합니다. 
 
 <p>
-이제부터 passport를 이용한 사용자 인증의 각 단계를 코드를 기반으로 알아보겠습니다.<br>
-1. 사용자가 ID, PW를 통해 로그인을 요청합니다.(main.html) <br>
-  - 사용자는 id, pw를 입력해 post 방식으로 서버에 로그인을 요청합니다. <br>
-2. 서버는 해당 경로의 router를 통해 사용자의 로그인 요청을 받습니다. (page.js) <br>
+이제부터 passport를 이용한 사용자 인증의 각 단계를 코드를 기반으로 알아보겠습니다.<br><br>
+1️⃣. 사용자가 ID, PW를 통해 로그인을 요청합니다.(main.html) <br>
+  - 사용자는 id, pw를 입력해 post 방식으로 서버에 로그인을 요청합니다. <br><br>
+2️⃣. 서버는 해당 경로의 router를 통해 사용자의 로그인 요청을 받습니다. (page.js) <br>
   - passport.authentication('local')부분이 바로 passport-local 전략을 통해 로그인 인증을 한다는 것이고,
-  passport-local이 구현되어 있는 passport/localStrategy.js로 이동합니다.  <br>
-3. passport-local의 코드의 usernameFiled와 passwordFiled는 사용자의 id와 pw를 설정하는 부분인데, 각 값은 사용자가 form 태그로 보내온 
-  parameter의 name을 적어주시면 됩니다. main.html에서 id의 name은 'user_id', pw의 name은 'password'라고 해줬기 때문에 동일하게 적어줍니다. 이렇게 동일한 name을 적어주시면 passport가 알아서 req.body에 있는 데이터를 파라미터로 넣어줍니다.<br>
-4. 이렇게 username과 password를 설정하면 두 번째 파라미터인 verify callback이 실행됩니다. 여기서 우리는 입력받은 username, password를 DB에 저장되어 있는 사용자 정보와 비교합니다. <br>
-  코드를 보면 우선 ID를 검색해 사용자가 존재하는 지 검색하고 존재한다면 비밀번호를 비교합니다. 후에 verify callback의 파라미터인 done을 호출하는데 done을 호출하면 2번째 page.js의 router의 콜백 함수가 호출됩니다. <br>
+  passport-local이 구현되어 있는 passport/localStrategy.js로 이동합니다.  <br><br>
+3️⃣. passport-local의 코드의 usernameFiled와 passwordFiled는 사용자의 id와 pw를 설정하는 부분인데, 각 값은 사용자가 form 태그로 보내온 
+  parameter의 name을 적어주시면 됩니다. main.html에서 id의 name은 'user_id', pw의 name은 'password'라고 해줬기 때문에 동일하게 적어줍니다. 이렇게 동일한 name을 적어주시면 passport가 알아서 req.body에 있는 데이터를 파라미터로 넣어줍니다.<br><br>
+4️⃣. 이렇게 username과 password를 설정하면 두 번째 파라미터인 verify callback이 실행됩니다. 여기서 우리는 입력받은 username, password를 DB에 저장되어 있는 사용자 정보와 비교합니다. <br>
+  코드를 보면 우선 ID를 검색해 사용자가 존재하는 지 검색하고 존재한다면 비밀번호를 비교합니다. 후에 verify callback의 파라미터인 done을 호출하는데 done을 호출하면 page.js의 passport.authentication('local')부분의 콜백 함수 <br> ((error, user,info)=>{})가  호출됩니다. <br><br>
   
-  다시 page.js로 돌아가기 전에 done에 대해 자세하게 알아보겠습니다.<br>
-  done(null, user) - 
-  done(null, false, {message:'not found'})
-  done(error)
+  다시 page.js로 돌아가기 전에 done에 대해 자세히 알아보겠습니다.<br><br>
+  ℹ️ 형식 : done(error, user, message)<br>
+  - 첫 번째 파라미터는 error가 발생할 시 설정해줍니다. ex) done(error);<br> 
+  - 두 번재 파라미터는 입력받은 유저 정보가 DB와 일치할시 설정합니다. ex) done(null, user)<br>
+  - 세 번째 파라미터는 보통 user를 찾지 못했을 때 추가적인 정보를 위해서 설정합니다. ex)(null, user, {message : '아아디가 일치...'});<br><br>
  
+5️⃣ localStrategy에서 사용자를 검색 후 done을 호출하면 사용자의 로그인 요청을 받았던 라우터에서 passport.authentication('local')의 콜백 함수가 실행되고 done에 설정했던 파라미터 값들이 해당 콜백 함수에 들어가게 됩니다. 따라서 error 발생하거나 user가 없는 경우에 대한 처리를 하게 되고, user가 존재한다면 req.login을 실행하게 됩니다. 여기서 req.login을 호출한다는 것은 사용자가 입력한 id, pw가 일치하기 때문에 로그인 처리를 완료한다는 것을 말합니다. <br>
+따라서 로그인 인증을 완료하려면 세션에 사용자의 정보를 저장하고 session id를 발급해야 하는데, 이러한 처리를 위해서 req.login이 호출되면 
+'passport/index.js'에 있는 serializeUser를 호출합니다. <br><br>
+  
+6️⃣ serializeUser는 인자로 넘어온 user를 session에 저장하는데, 보통 user의 정보를 모두 저장하는 것은 부담스럽기 때문에 user.id를 저장하게 됩니다. user.id를 정상적으로 저장하고 나면, 추후에 사용자의 요청에 대해서 sessionID를 통해 사용자의 id 값을 통해 로그인을 유지할 수 있습니다.<br><br>
+  
+7️⃣ 사용자 로그인 후 요청이 들어오면 app.js에서 설정해줬던 app.use(passport.session())이 실행되는데, passport.session은 
+  'passport/index.js'의 deserializeUser를 호출합니다. deserializeUser는 serializeUser의 반대 과정으로 session에 있는 user.id로 DB 검색을 통해 user를 req.user에 넣어줍니다. 따라서 이후의 req.user를 통해 사용자의 정보의 접근할 수 있습니다. 
 </p>
 
 
